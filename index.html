@@ -1,0 +1,188 @@
+
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Basic Three.js App</title>
+    <style>
+
+    </style>
+  </head>
+  <body>
+    
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/101/three.min.js"></script>
+	<script src="js/bibliotecas/StereoEffect.js"></script>
+	<script src="js/bibliotecas/DeviceOrientationControls.js"></script>
+	<script src="js/bibliotecas/OBJLoader.js"></script>
+	<script src="js/bibliotecas/OrbitControls.js"></script>
+	
+	<button onclick="openFullscreen();" style="position: absolute;">Fullscreen</button>
+	
+    <script>
+	
+var elem = document.documentElement;
+
+/* View in fullscreen */
+function openFullscreen() {
+  if (elem.requestFullscreen) {
+    elem.requestFullscreen();
+  } else if (elem.mozRequestFullScreen) { /* Firefox */
+    elem.mozRequestFullScreen();
+  } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+    elem.webkitRequestFullscreen();
+  } else if (elem.msRequestFullscreen) { /* IE/Edge */
+    elem.msRequestFullscreen();
+  }
+}
+
+/* Close fullscreen */
+function closeFullscreen() {
+  if (document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if (document.mozCancelFullScreen) { /* Firefox */
+    document.mozCancelFullScreen();
+  } else if (document.webkitExitFullscreen) { /* Chrome, Safari and Opera */
+    document.webkitExitFullscreen();
+  } else if (document.msExitFullscreen) { /* IE/Edge */
+    document.msExitFullscreen();
+  }
+}
+	     
+		 
+		 
+	
+	
+	
+	
+		 
+	  var scene = new THREE.Scene();
+var aspect = window.innerWidth / window.innerHeight;
+//Container object 3D
+	var contenedor = new THREE.Object3D();
+	
+	var camera = new THREE.PerspectiveCamera( 75, aspect, 0.1, 1000 );
+	
+	//Anadir la cámara
+	contenedor.add(camera);
+	
+	//Añadir contenedor a la escana
+	scene.add(contenedor);
+var renderer = new THREE.WebGLRenderer();
+renderer.setSize( window.innerWidth, window.innerHeight );
+document.body.appendChild( renderer.domElement );
+
+var time=0
+//Luces
+	light = new THREE.AmbientLight( 0xffffff );
+	scene.add( light );
+	// manager
+	
+	var geometry = new THREE.BoxGeometry( 0.1, 0.1, 50 );
+	var material = new THREE.MeshBasicMaterial({color: 0xf3dcbb});  
+	var tubo = new THREE.Mesh( geometry, material );
+	tubo.position.y=110
+	tubo.position.x=50
+	contenedor.add(tubo)
+	
+	function loadModel() {
+		object.traverse( function ( child ) {
+		if ( child.isMesh ) child.material.map = texture;
+		} );
+		object.position.y = 0;
+		object.scale.y = 5;
+		object.scale.x = 5;
+		object.scale.z = 5;
+		//object.rotation.z= Math.PI
+		//object.rotation.y = Math.PI;
+		object.name= "medelo";
+		//contenedor.add( object )
+		scene.add( object );
+	}
+	var manager = new THREE.LoadingManager( loadModel );
+	manager.onProgress = function ( item, loaded, total ) {
+		console.log( item, loaded, total );
+	};
+	// texture
+	var textureLoader = new THREE.TextureLoader( manager );
+	var texture = textureLoader.load( 'js/textura/Base_Color.png' );
+	// model
+	function onProgress( xhr ) {
+	if ( xhr.lengthComputable ) {
+		var percentComplete = xhr.loaded / xhr.total * 100;
+		console.log( 'model ' + Math.round( percentComplete, 2 ) + '% downloaded' );
+		}
+	}
+	
+	function onError() {}
+	var loader = new THREE.OBJLoader( manager );
+	loader.load( 'js/modelo/City.obj', function ( obj ) {
+		object = obj;
+	}, onProgress, onError );
+
+	
+
+
+
+
+
+
+var geometry = new THREE.BoxGeometry( 0.1, 0.1, 50 );
+var material = new THREE.MeshNormalMaterial();
+var cube = new THREE.Mesh( geometry, material );
+scene.add( cube );
+
+var geometry1 = new THREE.BoxGeometry( 5, 15, 5 );
+var material1 = new THREE.MeshNormalMaterial();
+var cube1 = new THREE.Mesh( geometry1, material1 );
+scene.add( cube1 );
+
+cube1.position.z = -15;
+cube1.position.y = -5;
+
+camera.position.z = 0;
+camera.position.y = 110;
+camera.position.x = 60;
+camera.rotation.y=Math.PI/2
+
+
+
+//Controls	
+	controls = new THREE.DeviceOrientationControls( camera );	
+	//controls = new THREE.OrbitControls( camera );	
+	
+	var effect;
+		effect = new THREE.StereoEffect( renderer );
+		effect.setSize( window.innerWidth, window.innerHeight );
+
+var render = function () {
+  requestAnimationFrame( render );
+ 
+	contenedor.position.x-=0.03
+	
+	tubo.rotation.x=Math.sin(time*0.5)+camera.rotation.z;
+	time+=0.01
+	
+	
+	if(tubo.rotation.x>=Math.sin(45)){
+	alert("game over");
+	}
+	
+	if(tubo.rotation.x<=Math.sin(-45)){
+	alert("game over");
+	}
+	
+  //renderer.render( scene, camera );
+			//Aplicra efecto
+			effect.render( scene, camera );
+  //Controles
+	controls.update();
+};
+
+render();
+	  
+	      
+	     
+	  
+    </script>
+  </body>
+</html>
